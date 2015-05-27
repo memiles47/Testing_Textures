@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MovingPlatformNew : MonoBehaviour
+public class PlatformNew : MonoBehaviour
 {
 
 	// Declaration of public variables
     public Transform platform;
     public Transform[] platformArray;
+    public Transform positionOne;
+    public Transform positionTwo;
     public float platformSpeed = 2.0f;
     public int waitTime = 2;
     
     // Declare private reference variables
     private GameObject platformWalls;
-    private Transform positionOne;
-    private Transform positionTwo;
 
     // Declaration of private Misc variables
     private Vector3 newDestination;
@@ -23,8 +23,6 @@ public class MovingPlatformNew : MonoBehaviour
     {
         // Initialize reference variables
         platformWalls = GameObject.Find("PlatformWalls");
-        positionOne = platformArray[0];
-        positionTwo = platformArray[1];
 
         // Initialize misc variables
         newDestination = positionOne.position;
@@ -43,8 +41,8 @@ public class MovingPlatformNew : MonoBehaviour
             {
                 StartCoroutine(StopWaitSet(positionTwo));
             }
-
-            else if (newDestination == positionTwo.position)
+            
+            else if(newDestination == positionTwo.position)
             {
                 StartCoroutine(StopWaitSet(positionOne));
             }
@@ -55,10 +53,10 @@ public class MovingPlatformNew : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(platformArray[0].position, platform.localScale);
+        Gizmos.DrawWireCube(positionOne.position, platform.localScale);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(platformArray[1].position, platform.localScale);
+        Gizmos.DrawWireCube(positionTwo.position, platform.localScale);
     }
 
     // Turn off wall colliders, wait for variable time, trun walls back on and set newDestination
