@@ -4,7 +4,7 @@ using System.Collections;
 public class ClickToMove : MonoBehaviour
 {
     // Declaration of public variables
-    public CharacterController charController;
+    //public CharacterController charController;
     public Vector3 position;
     public float speed;
     public AnimationClip run;
@@ -12,11 +12,13 @@ public class ClickToMove : MonoBehaviour
 
     // Declaration of private reference variables
     private Animation anim;
+    private CharacterController charController;
 
     // Initialize private reference variables
     public void Awake()
     {
         anim = GetComponent<Animation>();
+        charController = GetComponent<CharacterController>(); // **My change to the code**
     }
 
     // Use this for initialization
