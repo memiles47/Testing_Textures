@@ -10,6 +10,9 @@ public class ClickToMove : MonoBehaviour
     public AnimationClip run;
     public AnimationClip idle;
 
+    // Declaratio of public static variables
+    public static bool fighting;
+    
     // Declaration of private reference variables
     private Animation anim;
     private CharacterController charController;
@@ -31,14 +34,21 @@ public class ClickToMove : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-	    if(Input.GetMouseButton(0))
+        if (!fighting)
         {
-            // Locate where the player clicked on the terrain
-            LocatePosition();
-        }
+            if (Input.GetMouseButton(0))
+            {
+                // Locate where the player clicked on the terrain
+                LocatePosition();
+            }
 
-        // Move the player to the position clicked
-        MoveToPosition();
+            // Move the player to the position clicked
+            MoveToPosition();
+        }
+        else
+        {
+
+        }
 	}
 
     void LocatePosition()
@@ -75,7 +85,7 @@ public class ClickToMove : MonoBehaviour
         }
         else
         {
-            // Excuted when the gameobject is not moving
+            // Excuted when the gameobject is not moving and not attacking
             anim.CrossFade(idle.name);
         }
     }
