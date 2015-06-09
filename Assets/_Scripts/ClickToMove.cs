@@ -11,7 +11,7 @@ public class ClickToMove : MonoBehaviour
     public AnimationClip idle;
 
     // Declaratio of public static variables
-    public static bool fighting;
+    public static bool isFighting;
     
     // Declaration of private reference variables
     private Animation anim;
@@ -34,7 +34,7 @@ public class ClickToMove : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if (!fighting)
+        if (!isFighting)
         {
             if (Input.GetMouseButton(0))
             {
@@ -58,8 +58,10 @@ public class ClickToMove : MonoBehaviour
 
         if(Physics.Raycast(ray, out hit, 1000))
         {
-            position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
-            //Debug.Log(position);
+            if (hit.collider.tag != "Player")
+            {
+                position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+            }
         }
     }
 

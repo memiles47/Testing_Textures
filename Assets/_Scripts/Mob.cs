@@ -8,12 +8,17 @@ public class Mob : MonoBehaviour
     public float range;
     public AnimationClip run;
     public AnimationClip idle;
+    public AnimationClip die;
+    public bool dead;
 
     // Declaration of private reference variables
     private Transform player;
     private Animation anim;
     private CharacterController charController;
     private PlayerCombat playerCombat;
+
+    // Declaration of private misc variables
+    private int health;
 
     // Awake is called when the script instance is being loaded
     // Everything in the Awake function is my variation to the code and
@@ -30,23 +35,28 @@ public class Mob : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-	
+        health = 100;
+        dead = false;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        // Check if player is in range, if so do not run, you will be attacking,
-        // if not, chase at speed
-        if (!InRange())
+        if (!dead)
         {
-            // Not in range, chase player character
-            Chase();
-        }
-        else
-        {
-            // In rangem, stop and attack
-            anim.CrossFade(idle.name);
+            // Check if player is in range, if so do not run, you will be attacking,
+            // if not, chase at speed
+            if (!InRange())
+            {
+                // Not in range, chase player character
+                Chase();
+            }
+            else
+            {
+                // In rangem, stop and attack
+                anim.CrossFade(idle.name);
+            }
+            Debug.Log(health);
         }
     }
 
@@ -64,6 +74,7 @@ public class Mob : MonoBehaviour
 
     void Chase()
     {
+       
         // Rotate to look at player
         transform.LookAt(player.position);
 
@@ -73,12 +84,33 @@ public class Mob : MonoBehaviour
         // to use. (See Unity Answers for the difference)
         charController.Move(transform.forward * Time.deltaTime * speed);
         anim.CrossFade(run.name);
+     
     }
 
     // OnMouseOver is called every frame while the mouse is over the GUIElement or Collider
-    public void OnMouseOver()
+    void OnMouseOver()
     {
-        Debug.Log("Mouse is over Mob");
         playerCombat.opponent = gameObject;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+
+        if(health <= 0)
+        {
+            health = 0;
+            speed = 0;
+            dead = true;
+            Death();
+        }
+    }
+
+    void Death()
+    {
+        if (dead)
+        {
+            anim.Play(die.name);
+        }
     }
 }
