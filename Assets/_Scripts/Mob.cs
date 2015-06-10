@@ -6,9 +6,11 @@ public class Mob : MonoBehaviour
     // Declaration of public variables
     public float speed;
     public float range;
+    public int attackDamage;
     public AnimationClip run;
     public AnimationClip idle;
     public AnimationClip die;
+    public AnimationClip attack;
 
     // Declaration of private reference variables
     private Transform player;
@@ -17,7 +19,10 @@ public class Mob : MonoBehaviour
     private PlayerCombat playerCombat;
 
     // Declaration of private misc variables
+    private double impactTime;
     private int health;
+    private bool impacted;
+    
 
     // Awake is called when the script instance is being loaded
     // Everything in the Awake function is my variation to the code and
@@ -35,11 +40,15 @@ public class Mob : MonoBehaviour
     void Start()
     {
         health = 100;
+        impactTime = 0.35f;
+        impacted = false;
+        attackDamage = 25;
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log("Enemy Health = " + health);
         // Check if player is in range, if so do not run, you will be attacking,
         // if not, chase at speed
         if (!IsDead())
@@ -52,9 +61,15 @@ public class Mob : MonoBehaviour
             else
             {
                 // In rangem, stop and attack
-                anim.CrossFade(idle.name);
+                //anim.CrossFade(idle.name);
+                anim.CrossFade(attack.name);
+                MobCombat();
+
+                if(anim[attack.name].time > anim[attack.name].length * 0.95f)
+                {
+                    impacted = false;
+                }
             }
-            Debug.Log(health);
         }
         else
         {
@@ -95,7 +110,18 @@ public class Mob : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        health -= damage;
+        if (health != 0)
+        {
+            health -= damage;
+            if (health < 0)
+            {
+                health = 0;
+            }
+        }
+        else
+        {
+            return;
+        }
     }
 
     bool IsDead()
@@ -105,10 +131,26 @@ public class Mob : MonoBehaviour
 
     void Death()
     {
+        playerCombat.opponent = null;
         anim.CrossFade(die.name);
+
         if(anim[die.name].time > anim[die.name].length * 0.90f)
         {
             Destroy(gameObject);
+        }
+    }
+
+    void MobCombat()
+    {
+        if(playerCombat.IsDead())
+        {
+            anim.CrossFade(idle.name);
+        }
+        else if((anim[attack.name].time > anim[attack.name].length * impactTime) && !impacted &&
+            (anim[attack.name].time < anim[attack.name].length * 0.95f) && !playerCombat.IsDead())
+        {
+            playerCombat.GetHit(attackDamage);
+            impacted = true;
         }
     }
 }

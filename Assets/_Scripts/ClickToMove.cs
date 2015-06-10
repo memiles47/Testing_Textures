@@ -16,12 +16,14 @@ public class ClickToMove : MonoBehaviour
     // Declaration of private reference variables
     private Animation anim;
     private CharacterController charController;
+    private PlayerCombat playerCombat;
 
     // Initialize private reference variables
     public void Awake()
     {
         anim = GetComponent<Animation>();
         charController = GetComponent<CharacterController>(); // **My change to the code**
+        playerCombat = GetComponent<PlayerCombat>();
     }
 
     // Use this for initialization
@@ -67,28 +69,31 @@ public class ClickToMove : MonoBehaviour
 
     void MoveToPosition()
     {
-        if (Vector3.Distance(position, transform.position) > 0.75f)
+        if (!playerCombat.IsDead())
         {
-            // Excecuted when the gameobject is moving
-            // Calculate the location of the clicked position relative to the players location
-            Vector3 relativePos = position - transform.position;
-            Quaternion newRotation = Quaternion.LookRotation(relativePos);
+            if (Vector3.Distance(position, transform.position) > 0.75f)
+            {
+                // Excecuted when the gameobject is moving
+                // Calculate the location of the clicked position relative to the players location
+                Vector3 relativePos = position - transform.position;
+                Quaternion newRotation = Quaternion.LookRotation(relativePos);
 
-            // Reset x and z axis in newRotation
-            newRotation.x = 0.0f;
-            newRotation.z = 0.0f;
+                // Reset x and z axis in newRotation
+                newRotation.x = 0.0f;
+                newRotation.z = 0.0f;
 
-            // Smoothly rotate the player towards the clicked position
-            transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, Time.deltaTime * 10.0f);
+                // Smoothly rotate the player towards the clicked position
+                transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, Time.deltaTime * 10.0f);
 
-            charController.Move(transform.forward * Time.deltaTime * speed);
+                charController.Move(transform.forward * Time.deltaTime * speed);
 
-            anim.CrossFade(run.name);
-        }
-        else
-        {
-            // Excuted when the gameobject is not moving and not attacking
-            anim.CrossFade(idle.name);
+                anim.CrossFade(run.name);
+            }
+            else
+            {
+                // Excuted when the gameobject is not moving, attacking or dead
+                anim.CrossFade(idle.name);
+            }
         }
     }
 }
