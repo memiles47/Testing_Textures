@@ -7,6 +7,7 @@ public class PlayerCombat : MonoBehaviour
     public GameObject opponent; // This variable must be public because it will be acessed from another script
     public AnimationClip fighting;
     public int attackDamage;
+    public float range;
     
     // Declaration of private reference variables
     private Animation anim;
@@ -32,7 +33,7 @@ public class PlayerCombat : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if(Input.GetKey(KeyCode.Space))
+        if(Input.GetKey(KeyCode.Space) && InRange())
         {
             anim.Play(fighting.name);
             ClickToMove.isFighting = true;
@@ -42,7 +43,7 @@ public class PlayerCombat : MonoBehaviour
             }
         }
 
-        if (!anim.IsPlaying(fighting.name))
+        if (anim[fighting.name].time > anim[fighting.name].length * 0.90f)
         {
             ClickToMove.isFighting = false;
             impacted = false;
@@ -55,11 +56,23 @@ public class PlayerCombat : MonoBehaviour
     {
         if(opponent != null && anim.IsPlaying(fighting.name) && !impacted)
         {
-            if(anim[fighting.name].time > anim[fighting.name].length * impactTime)
+            if(anim[fighting.name].time > anim[fighting.name].length * impactTime && (anim[fighting.name].time < anim[fighting.name].length * 0.90f))
             {
                 opponent.GetComponent<Mob>().TakeDamage(attackDamage);
                 impacted = true;
             }
+        }
+    }
+
+    bool InRange()
+    {
+        if (Vector3.Distance(transform.position, opponent.transform.position) <= range)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }
