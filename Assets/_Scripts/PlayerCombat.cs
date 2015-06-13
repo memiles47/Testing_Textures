@@ -8,7 +8,7 @@ public class PlayerCombat : MonoBehaviour
     public AnimationClip fighting;
     public AnimationClip death;
     public int attackDamage;
-    public float range;
+    public int countDown;
     
     // Declaration of private reference variables
     private Animation anim;
@@ -17,9 +17,11 @@ public class PlayerCombat : MonoBehaviour
     private double impactTime;
     private bool impacted;
     private int health;
+    private int combatEscapeTime;
     private bool startedDeath;
-    private bool endedDeath;
-
+    private float range;
+    //private bool endedDeath;
+    
     // Initialize private reference variables
     void Awake()
     {
@@ -31,9 +33,12 @@ public class PlayerCombat : MonoBehaviour
     {
         impactTime = 0.35f;
         impacted = false;
-        health = 100;
+        health = 100000;
         startedDeath = false;
-        endedDeath = false;
+        combatEscapeTime = 5;
+        countDown = combatEscapeTime;
+        range = 1.25f;
+        //endedDeath = false;
 	}
 	
 	// Update is called once per frame
@@ -66,6 +71,9 @@ public class PlayerCombat : MonoBehaviour
         {
             if(anim[fighting.name].time > anim[fighting.name].length * impactTime && (anim[fighting.name].time < anim[fighting.name].length * 0.90f))
             {
+                countDown = combatEscapeTime + 2;
+                CancelInvoke("CombatCountDown");
+                InvokeRepeating("CombatCountDown", 0, 1);
                 opponent.GetComponent<Mob>().TakeDamage(attackDamage);
                 impacted = true;
             }
@@ -122,8 +130,17 @@ public class PlayerCombat : MonoBehaviour
 
         if(!anim.IsPlaying(death.name) && startedDeath)
         {
-            endedDeath = true;
+            //endedDeath = true;
             Debug.Log("You Have Died");
+        }
+    }
+
+    void CombatCountDown()
+    {
+        countDown -= 1;
+        if(countDown == 0)
+        {
+            CancelInvoke("CombatCountDown");
         }
     }
 }

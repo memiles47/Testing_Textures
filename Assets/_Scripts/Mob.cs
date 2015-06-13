@@ -11,6 +11,8 @@ public class Mob : MonoBehaviour
     public AnimationClip idle;
     public AnimationClip die;
     public AnimationClip attack;
+    public int health;
+    public int maxHealth;
 
     // Declaration of private reference variables
     private Transform player;
@@ -20,7 +22,6 @@ public class Mob : MonoBehaviour
 
     // Declaration of private misc variables
     private double impactTime;
-    private int health;
     private bool impacted;
     
 
@@ -39,7 +40,8 @@ public class Mob : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        health = 100;
+        maxHealth = 100;
+        health = maxHealth;
         impactTime = 0.35f;
         impacted = false;
         attackDamage = 25;
