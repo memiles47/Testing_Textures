@@ -19,6 +19,7 @@ public class Mob : MonoBehaviour
     private Animation anim;
     private CharacterController charController;
     private PlayerCombat playerCombat;
+    private LevelSystem playerLevel;
 
     // Declaration of private misc variables
     private double impactTime;
@@ -35,6 +36,7 @@ public class Mob : MonoBehaviour
         anim = GetComponent<Animation>();
         charController = GetComponent<CharacterController>();
         playerCombat = player.GetComponent<PlayerCombat>();
+        playerLevel = GameObject.FindGameObjectWithTag("Player").GetComponent<LevelSystem>();
     }
 
     // Use this for initialization
@@ -138,6 +140,7 @@ public class Mob : MonoBehaviour
 
         if(anim[die.name].time > anim[die.name].length * 0.90f)
         {
+            playerLevel.expPoints += 200;
             Destroy(gameObject);
         }
     }

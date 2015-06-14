@@ -7,8 +7,10 @@ public class PlayerCombat : MonoBehaviour
     public GameObject opponent; // This variable must be public because it will be acessed from another script
     public AnimationClip fighting;
     public AnimationClip death;
-    public int attackDamage;
     public int countDown;
+    public int attackDamage;
+    public int health;
+    public int maxHealth;
     
     // Declaration of private reference variables
     private Animation anim;
@@ -16,7 +18,6 @@ public class PlayerCombat : MonoBehaviour
     // Declaration of private misc variables
     private double impactTime;
     private bool impacted;
-    private int health;
     private int combatEscapeTime;
     private bool startedDeath;
     private float range;
@@ -26,6 +27,7 @@ public class PlayerCombat : MonoBehaviour
     void Awake()
     {
         anim = GetComponent<Animation>();
+        maxHealth = 100000;
     }
 
     // Use this for initialization
@@ -33,7 +35,7 @@ public class PlayerCombat : MonoBehaviour
     {
         impactTime = 0.35f;
         impacted = false;
-        health = 100000;
+        health = maxHealth;
         startedDeath = false;
         combatEscapeTime = 5;
         countDown = combatEscapeTime;

@@ -15,7 +15,7 @@ public class EnemyHealth : MonoBehaviour
     public float percentHealth;
 
     // Declaration of private misc variables
-    private  float barWidthFac;
+    private float barWidthFac;
     private float healthBarXPercent;
     private float healthBarYPercent;
     private float healthBarHeightPercent;
