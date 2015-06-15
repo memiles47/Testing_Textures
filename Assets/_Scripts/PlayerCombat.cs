@@ -46,8 +46,12 @@ public class PlayerCombat : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        Debug.Log("Player Health = " + health);
         PlayerDeath();
+        if(Input.GetKeyDown(KeyCode.S))
+        {
+            opponent.GetComponent<Mob>().GetStunned(5);
+        }
+
         if(Input.GetKey(KeyCode.Space) && InRange())
         {
             anim.Play(fighting.name);
@@ -144,5 +148,10 @@ public class PlayerCombat : MonoBehaviour
         {
             CancelInvoke("CombatCountDown");
         }
+    }
+
+    void Stun()
+    {
+
     }
 }
