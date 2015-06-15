@@ -24,8 +24,9 @@ public class Mob : MonoBehaviour
     // Declaration of private misc variables
     private double impactTime;
     private bool impacted;
+    private int expPointValue;
+    private int stunTime;
     
-
     // Awake is called when the script instance is being loaded
     // Everything in the Awake function is my variation to the code and
     // initiates the private variables rather than the drag and drop in
@@ -47,6 +48,7 @@ public class Mob : MonoBehaviour
         impactTime = 0.35f;
         impacted = false;
         attackDamage = 25;
+        expPointValue = 100;
     }
 
     // Update is called once per frame
@@ -57,22 +59,29 @@ public class Mob : MonoBehaviour
         // if not, chase at speed
         if (!IsDead())
         {
-            if (!InRange())
+            if (stunTime <= 0)
             {
-                // Not in range, chase player character
-                Chase();
+                if (!InRange())
+                {
+                    // Not in range, chase player character
+                    Chase();
+                }
+                else
+                {
+                    // In rangem, stop and attack
+                    //anim.CrossFade(idle.name);
+                    anim.CrossFade(attack.name);
+                    MobCombat();
+
+                    if (anim[attack.name].time > anim[attack.name].length * 0.95f)
+                    {
+                        impacted = false;
+                    }
+                }
             }
             else
             {
-                // In rangem, stop and attack
-                //anim.CrossFade(idle.name);
-                anim.CrossFade(attack.name);
-                MobCombat();
-
-                if(anim[attack.name].time > anim[attack.name].length * 0.95f)
-                {
-                    impacted = false;
-                }
+                
             }
         }
         else
@@ -140,7 +149,7 @@ public class Mob : MonoBehaviour
 
         if(anim[die.name].time > anim[die.name].length * 0.90f)
         {
-            playerLevel.expPoints += 200;
+            playerLevel.expPoints += expPointValue;
             Destroy(gameObject);
         }
     }
@@ -156,6 +165,21 @@ public class Mob : MonoBehaviour
         {
             playerCombat.GetHit(attackDamage);
             impacted = true;
+        }
+    }
+
+    public void GetStunned(int seconds)
+    {
+        stunTime = seconds;
+        InvokeRepeating("StunCountDown", 0.0f, 1.0f);
+    }
+
+    void StunCountDown()
+    {
+        stunTime -= 1;
+        if(stunTime == 0)
+        {
+            CancelInvoke("StunCountDown");
         }
     }
 }

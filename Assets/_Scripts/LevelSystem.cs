@@ -10,8 +10,9 @@ public class LevelSystem : MonoBehaviour
     // Declaration of private reference variables
 
     // Declaration of private misc variables
-    private int levelUpExp;
+    //private int levelUpExp;
     private PlayerCombat  playerCombat;
+    private int baseLevelUp;
 
     // Awake is called when the script instance is being loaded
     public void Awake()
@@ -23,7 +24,7 @@ public class LevelSystem : MonoBehaviour
 	void Start ()
     {
         level = 1;
-        levelUpExp = 100;
+        baseLevelUp = 100;
 	}
 	
 	// Update is called once per frame
@@ -34,9 +35,9 @@ public class LevelSystem : MonoBehaviour
 
     public void LevelUp()
     {
-        if(expPoints >= levelUpExp)
+        if(expPoints >= level * baseLevelUp + (int)Mathf.Pow((float)level, 2.0f))      
         {
-            expPoints = 0;
+            expPoints -= level * baseLevelUp + (int)Mathf.Pow((float)level, 2.0f);
             level += 1;
             LevelEffects();
         }
@@ -44,7 +45,8 @@ public class LevelSystem : MonoBehaviour
 
     public void LevelEffects()
     {
-        playerCombat.maxHealth += 100;
-        playerCombat.attackDamage += 50;
+        playerCombat.maxHealth += 10 + (int)Mathf.Pow((float)level, 2.0f);
+        playerCombat.attackDamage += (int)Mathf.Pow((float)level, 2.0f);
+        playerCombat.health = playerCombat.maxHealth;
     }
 }
