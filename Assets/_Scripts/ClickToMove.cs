@@ -47,10 +47,10 @@ public class ClickToMove : MonoBehaviour
             // Move the player to the position clicked
             MoveToPosition();
         }
-        else
-        {
+        //else
+        //{
 
-        }
+        //}
 	}
 
     void LocatePosition()

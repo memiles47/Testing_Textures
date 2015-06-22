@@ -5,12 +5,14 @@ public class PlayerCombat : MonoBehaviour
 {
     // Declaration of public variables
     public GameObject opponent; // This variable must be public because it will be acessed from another script
+    public Mob stun; // This variable must be public because it will be acessed from another script
     public AnimationClip fighting;
     public AnimationClip death;
     public int countDown;
     public int attackDamage;
     public int health;
     public int maxHealth;
+    public bool specialAttack;
     
     // Declaration of private reference variables
     private Animation anim;
@@ -21,13 +23,15 @@ public class PlayerCombat : MonoBehaviour
     private int combatEscapeTime;
     private bool startedDeath;
     private float range;
-    //private bool endedDeath;
+    private PlayerCombat playerCombat;
+    private bool endedDeath;
     
     // Initialize private reference variables
     void Awake()
     {
         anim = GetComponent<Animation>();
-        maxHealth = 100000;
+        playerCombat = GetComponent<PlayerCombat>();
+        //maxHealth = 100000;
     }
 
     // Use this for initialization
@@ -40,20 +44,26 @@ public class PlayerCombat : MonoBehaviour
         combatEscapeTime = 5;
         countDown = combatEscapeTime;
         range = 1.25f;
-        //endedDeath = false;
+        endedDeath = false;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        PlayerDeath();
-        if(Input.GetKeyDown(KeyCode.S))
+        if (!specialAttack)
         {
-            opponent.GetComponent<Mob>().GetStunned(5);
+            Attack(0, 1.0f, KeyCode.Space, null);
         }
 
-        if(Input.GetKey(KeyCode.Space) && InRange())
+        PlayerDeath();
+	}
+
+    public bool Attack(int stunTIme, float damageFactor, KeyCode key, GameObject particleEffect)
+    {
+        if (Input.GetKey(key) && InRange())
         {
+            Debug.Log("You Pressed" + key);
+
             anim.Play(fighting.name);
             ClickToMove.isFighting = true;
             if (opponent != null)
@@ -66,12 +76,26 @@ public class PlayerCombat : MonoBehaviour
         {
             ClickToMove.isFighting = false;
             impacted = false;
+            if(specialAttack)
+            {
+                specialAttack = false;
+            }
+            return false;
         }
 
-        Impact();
-	}
+        Impact(stunTIme, damageFactor, particleEffect);
+        return true;
+    }
 
-    void Impact()
+    public void ResetAttack()
+    {
+        ClickToMove.isFighting = false;
+        impacted = false;
+        anim.Stop(fighting.name);
+    }
+
+
+    void Impact(int timeStunned, float scaledDamage, GameObject particleEffect)
     {
         if(opponent != null && anim.IsPlaying(fighting.name) && !impacted)
         {
@@ -80,7 +104,16 @@ public class PlayerCombat : MonoBehaviour
                 countDown = combatEscapeTime + 2;
                 CancelInvoke("CombatCountDown");
                 InvokeRepeating("CombatCountDown", 0, 1);
-                opponent.GetComponent<Mob>().TakeDamage(attackDamage);
+                opponent.GetComponent<Mob>().TakeDamage((int) (attackDamage * scaledDamage));
+                opponent.GetComponent<Mob>().GetStunned(timeStunned);
+
+                // Play Particle Effect
+                if (particleEffect != null)
+                {
+                    Instantiate(particleEffect, new Vector3(opponent.transform.position.x,
+                        opponent.transform.position.y + 1.5f, opponent.transform.position.z), Quaternion.identity);
+                }
+
                 impacted = true;
             }
         }
@@ -108,10 +141,10 @@ public class PlayerCombat : MonoBehaviour
                 health = 0;
             }
         }
-        else
-        {
-            return;
-        }
+        //else
+        //{
+        //    return;
+        //}
     }
 
     public bool IsDead()
@@ -134,10 +167,10 @@ public class PlayerCombat : MonoBehaviour
             startedDeath = true;
         }
 
-        if(!anim.IsPlaying(death.name) && startedDeath)
+        if(!anim.IsPlaying(death.name) && startedDeath && !endedDeath)
         {
-            //endedDeath = true;
             Debug.Log("You Have Died");
+            endedDeath = true;
         }
     }
 
@@ -148,10 +181,5 @@ public class PlayerCombat : MonoBehaviour
         {
             CancelInvoke("CombatCountDown");
         }
-    }
-
-    void Stun()
-    {
-
     }
 }

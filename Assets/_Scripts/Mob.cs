@@ -43,7 +43,7 @@ public class Mob : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        maxHealth = 100;
+        maxHealth = 96;
         health = maxHealth;
         impactTime = 0.35f;
         impacted = false;
@@ -119,6 +119,7 @@ public class Mob : MonoBehaviour
     void OnMouseOver()
     {
         playerCombat.opponent = gameObject;
+        playerCombat.stun = GetComponent<Mob>();
     }
 
     public void TakeDamage(int damage)
@@ -131,10 +132,10 @@ public class Mob : MonoBehaviour
                 health = 0;
             }
         }
-        else
-        {
-            return;
-        }
+        //else
+        //{
+        //    return;
+        //}
     }
 
     bool IsDead()
@@ -170,6 +171,7 @@ public class Mob : MonoBehaviour
 
     public void GetStunned(int seconds)
     {
+        CancelInvoke("StunCountDown");
         stunTime = seconds;
         InvokeRepeating("StunCountDown", 0.0f, 1.0f);
     }
