@@ -4,11 +4,13 @@ using System.Collections;
 public class SpecialAttack : MonoBehaviour
 {
     // Declaration of public variables
+    public bool opponentBased;
     public KeyCode key;
     public float damageFactor;
     public int stunTime;
     public bool specialAttack;
     public GameObject particleEffect;
+    public int projectile;
 
     // Declaration of private reference variables
     private PlayerCombat playerCombat;
@@ -39,7 +41,7 @@ public class SpecialAttack : MonoBehaviour
 
         if (specialAttack)
         {
-            if(playerCombat.Attack(stunTime, damageFactor, key, particleEffect))
+            if(playerCombat.Attack(stunTime, damageFactor, key, particleEffect, projectile, opponentBased))
             {
 
             }

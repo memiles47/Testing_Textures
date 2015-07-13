@@ -3,9 +3,11 @@ using System.Collections;
 
 public class ClickToMove : MonoBehaviour
 {
+    // Declaration of public static variables
+    public static Vector3 position;
+    public static Vector3 cursorPosition;
+
     // Declaration of public variables
-    //public CharacterController charController;
-    public Vector3 position;
     public float speed;
     public AnimationClip run;
     public AnimationClip idle;
@@ -36,6 +38,8 @@ public class ClickToMove : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+        LocateCursor();
+
         if (!isFighting)
         {
             if (Input.GetMouseButton(0))
@@ -58,14 +62,25 @@ public class ClickToMove : MonoBehaviour
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if(Physics.Raycast(ray, out hit, 1000))
+        if (Physics.Raycast(ray, out hit, 1000))
         {
             if (hit.collider.tag != "Player" && hit.collider.tag != "Enemy")
             {
-                position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+                position = hit.point;
             }
         }
     }
+
+        void LocateCursor()
+        {
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if(Physics.Raycast(ray, out hit, 1000))
+        {
+            cursorPosition = hit.point;
+        }
+     }
 
     void MoveToPosition()
     {

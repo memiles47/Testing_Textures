@@ -43,7 +43,7 @@ public class Mob : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        maxHealth = 96;
+        maxHealth = 300;
         health = maxHealth;
         impactTime = 0.35f;
         impacted = false;
@@ -132,10 +132,6 @@ public class Mob : MonoBehaviour
                 health = 0;
             }
         }
-        //else
-        //{
-        //    return;
-        //}
     }
 
     bool IsDead()
